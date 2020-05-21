@@ -1,0 +1,104 @@
+entity Projeto{
+	id Long required,
+    tipoStrutura String required,
+    nomeObra String required,
+    endereco String required,
+    cidade String required,
+    uf String required,
+    ura String,
+    caa Integer required,
+    fckMinimo Integer required,
+    fckAdotado Integer required,
+  	aguaCimento Integer required,
+    cobrimentoProjeto CobrimentoProjeto 
+ }
+
+relationship OneToOne{
+	Projeto{cobrimentoProjeto} to CobrimentoProjeto
+}
+
+entity CobrimentoProjeto{
+	id Long required,
+    lajeNominal Integer required,
+    lajeRigoroso Integer required,
+    vigaNominal Integer required,
+    vigaRigoroso Integer required,
+    pilarNominal Integer required,
+    pilarRigoroso Integer required,
+    fundacaoNominal Integer required,
+    fundacaoRigoroso Integer required
+}
+
+enum TipoEstrutura {
+	CA,
+    CP
+}
+
+enum Agressividade{
+	FRACA,
+    MODERADA,
+    FORTE,
+    MUITO_FORTE
+}
+
+enum RiscoDeterioracao{
+	INSIGNIFICANTE,
+    PEQUENO,
+    GRANDE,
+    ELEVADO
+}
+
+enum TipoAmbiente {
+	RURAL,
+    SUBMERSA,
+    URBANA,
+    MARINHA,
+    INDUSTRIAL,
+    RESPINGO_MARE
+}
+
+enum Elemento{
+	LAJE,
+    VIGA_PILAR,
+    ESTRUTURA_EM_CONTATO_SOLO
+}
+
+entity ClasseAgressividadeAmbiental{
+	id Long required,
+    classe Integer required,
+    agressividade Agressividade required,
+    riscoDeteriocao RiscoDeterioracao required,
+   
+}
+
+relationship OneToMany{
+	ClasseAgressividadeAmbiental{id} to ClasseConcreto{idClasseAgressividadeAmbiental}	
+    ClasseAgressividadeAmbiental{id} to RelacaoAguaCimento{idClasseAgressividadeAmbiental}	
+    ClasseAgressividadeAmbiental{id} to Cobrimento{idClasseAgressividadeAmbiental}	
+}
+
+entity ClasseConcreto{
+	id Long required,
+    tipo TipoEstrutura required,
+    fckConcreto String required,
+    idClasseAgressividadeAmbiental Long required
+}
+
+entity RelacaoAguaCimento{
+	id Long required,
+    tipo TipoEstrutura required,
+    percentual Integer required,
+    idClasseAgressividadeAmbiental Long required
+}
+
+entity Cobrimento{
+	id Long required,
+    tipoEstrutura TipoEstrutura required,
+    elemento Elemento required,
+    nominal Integer required,
+    idClasseAgressividadeAmbiental Long required   
+}
+
+// Set service options to all except few
+service all with serviceImpl 
+
